@@ -223,6 +223,53 @@ Xl = 2*pi*f*L*1000 # Ohm/km
 Req = d/2
 C = 1000/(18*math.log(GMD*1000/Req)) # nF/km / around 0-20nF/km in overhead lines
 
+
+
+class SimpleLineParam:
+    def __init__(self) -> None:
+        # Distances
+
+        a = 9 #m
+        b = 3 #m
+
+        d_AB = sqrt((a/2)**2 + b**2) #m
+        d_AC = a    #m
+        d_BC = d_AB #m
+
+        # Conductor Characteristics
+
+        # 54Al + 7Ac
+        # Type Cardenal
+
+        self.R = 0.062   # Ohms/km (AC resistance)
+        d = 30.40   # diameter in mm
+        kg = 0.809  #
+        self.G = 0 # In this case we consider Admittance negligible
+
+        # Inductance calculation
+
+        GMD = (d_AB+d_BC+d_AC) ** (1/3) 
+        GMR = kg*(d/2)
+        self.L = 0.2*log((GMD*1000)/GMR) #mH/km  / Should give around 1 mH/km
+        f= 50 # Hz
+        self.Xl = 2*pi*f*self.L*1000 # Ohm/km
+
+
+        # Capacitance
+
+        Req = d/2
+        self.C = 1000/(18*log(GMD*1000/Req)) # nF/kn / around 0-20nF/km in overhead lines
+
+
+
+
+
+
+
+
+
+
+
 #####################################################################################
 
 #LINES LENGHT
@@ -237,22 +284,14 @@ max_i=888.98/1000
 
 
 dbLine = DoubleLineParam()
-
+sline = SingleLineParam() 
 
 pp.create_line_from_parameters(net, from_bus = 1, to_bus = 3, length_km = Long1, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = max_i, name='1_3')
 pp.create_line_from_parameters(net, from_bus = 3, to_bus = 9, length_km = Long2, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = max_i, name='3_9')
-pp.create_line_from_parameters(net, from_bus = 9, to_bus = 12, length_km = Long2, r_ohm_per_km = R, x_ohm_per_km = Xl, c_nf_per_km = C , max_i_ka = max_i, name='9_12')
-pp.create_line_from_parameters(net, from_bus = 9, to_bus = 5, length_km = Long3, r_ohm_per_km = R, x_ohm_per_km = Xl, c_nf_per_km = C , max_i_ka = max_i, name='9_5')
+pp.create_line_from_parameters(net, from_bus = 9, to_bus = 12, length_km = Long2, r_ohm_per_km = sline.R, x_ohm_per_km = sline.Xl, c_nf_per_km = sline.C , max_i_ka = max_i, name='9_12')
+pp.create_line_from_parameters(net, from_bus = 9, to_bus = 5, length_km = Long3, r_ohm_per_km = sline.R, x_ohm_per_km = sline.Xl, c_nf_per_km = sline.C , max_i_ka = max_i, name='9_5')
 pp.create_line_from_parameters(net, from_bus = 9, to_bus = 7, length_km = Long4, r_ohm_per_km = dbline.R, x_ohm_per_km = dbline.Xl, c_nf_per_km = dbline.C , max_i_ka = max_i, name='9_7')
-pp.create_line_from_parameters(net, from_bus = 7, to_bus = 10, length_km = Long3, r_ohm_per_km = R, x_ohm_per_km = Xl, c_nf_per_km = C , max_i_ka = max_i, name='7_10')
-
-##pp.create_line_from_parameters(net, from_bus = 1, to_bus = 3, length_km = Long1, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = max_i, name='01')
-##pp.create_line_from_parameters(net, from_bus = 3, to_bus = 9, length_km = Long2, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = max_i, name='02')
-##pp.create_line_from_parameters(net, from_bus = 9, to_bus = 12, length_km = Long2, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='03')
-##pp.create_line_from_parameters(net, from_bus = 9, to_bus = 5, length_km = Long3, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='04')
-##pp.create_line_from_parameters(net, from_bus = 9, to_bus = 7, length_km = Long4, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='03')
-##pp.create_line_from_parameters(net, from_bus = 9, to_bus = 5, length_km = Long3, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='04')
-
+pp.create_line_from_parameters(net, from_bus = 7, to_bus = 10, length_km = Long3, r_ohm_per_km = sline.R, x_ohm_per_km = sline.Xl, c_nf_per_km = sline.C , max_i_ka = max_i, name='7_10')
 
 pp.runpp(net)
 
