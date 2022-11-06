@@ -1,7 +1,15 @@
+import numpy as numpy
+import pandapower as pp
+import pandas as pd
+
+
 ### put all the varaibles here ###
 
 V_HV = 220 #kilo-V base voltage
 P_nuc = 450 #active power of nuclear poweirr 
+P_I = 300
+P_II = 120
+
 Q_dis = 0
 PF=0.98
 
@@ -49,7 +57,7 @@ pp.create_bus(net, name='Dismantled plant HV', vn_kv = V_HV, geodata=(150,150)) 
 ### Generator Definition ###
 
 pp.create_gen(net, 0, name='Nuclear PP', vm_pu=1.05, p_mw=P_nuc)
-pp.create_gen(net, 11, name='Dismantled Plant', vm_pu = 1, p_mw=0, q_mw=Q_dis)
+pp.create_gen(net, 11, name='Dismantled Plant', vm_pu = 1, p_mw=0, q_mvar=Q_dis)
 pp.create_ext_grid(net, 10)  #Slack bus will be bus 10
 
 #Incoming exercises
@@ -81,6 +89,19 @@ pp.create_line_from_parameters(net, from_bus = 0, to_bus = 2, length_km = L, r_o
 pp.create_line_from_parameters(net, from_bus = 1, to_bus = 3, length_km = L, r_ohm_per_km = r13_km, x_ohm_per_km = x13_km, c_nf_per_km = c_nf_km , max_i_ka = max_i_ka, name='13')
 pp.create_line_from_parameters(net, from_bus = 2, to_bus = 3, length_km = L, r_ohm_per_km = r23_km, x_ohm_per_km = x23_km, c_nf_per_km = c_nf_km , max_i_ka = max_i_ka, name='23')
 
+
+
+
+
+### Trafo definition ###
+
+
+pp.create_transformer_from_parameters(net, hv_bus = 1, lv_bus = 0, sn_mva = 200, vn_hv_kv = 220, vn_lv_kv = 25, vk_percent = 12, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_NuclearPP')
+pp.create_transformer_from_parameters(net, hv_bus = 3, lv_bus = 2, sn_mva = 200, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 12, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_II_1')
+pp.create_transformer_from_parameters(net, hv_bus = 5, lv_bus = 4, sn_mva = 200, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 12, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_II_2')
+pp.create_transformer_from_parameters(net, hv_bus = 7, lv_bus = 6, sn_mva = 200, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 12, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_II_3')
+pp.create_transformer_from_parameters(net, hv_bus = 9, lv_bus = 8, sn_mva = 200, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 12, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_I_1')
+pp.create_transformer_from_parameters(net, hv_bus = 12, lv_bus = 11, sn_mva = 200, vn_hv_kv = 220, vn_lv_kv = 25, vk_percent = 12, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_DismantledPlant')
 
 
 
@@ -169,45 +190,40 @@ class DoubleLineParam:
         print('C = ',self.C, ' nF/km')
         print('G = ',self.G, ' 1/Ohms·km')
 
-#--------------------------------------------------------------------#
-# Simple Line
-#--------------------------------------------------------------------#
-
-class SimpleLineParam:
-    def __init__(self) -> None:
-        # Distances
-
-        a = 9 #m
-        b = 3 #m
-
-        d_AB = sqrt((a/2)**2 + b**2) #m
-        d_AC = a    #m
-        d_BC = d_AB #m
-
-        # Conductor Characteristics
-
-        # 54Al + 7Ac
-        # Type Cardenal
-
-        self.R = 0.062   # Ohms/km (AC resistance)
-        d = 30.40   # diameter in mm
-        kg = 0.809  #
-        self.G = 0 # In this case we consider Admittance negligible
-
-        # Inductance calculation
-
-        GMD = (d_AB+d_BC+d_AC) ** (1/3) 
-        GMR = kg*(d/2)
-        self.L = 0.2*log((GMD*1000)/GMR) #mH/km  / Should give around 1 mH/km
-        f= 50 # Hz
-        self.Xl = 2*pi*f*self.L*1000 # Ohm/km
 
 
-        # Capacitance
 
-        Req = d/2
-        self.C = 1000/(18*log(GMD*1000/Req)) # nF/kn / around 0-20nF/km in overhead lines
+#Single Line Param
 
+a = 9 #m
+b = 3 #m
+
+d_AB = ((a/2)**2 + b**2) ** (1/2) #m
+d_AC = a    #m
+d_BC = d_AB #m
+# Conductor Characteristics
+
+# 54Al + 7Ac
+# Type Cardenal
+
+R = 0.062   # Ohms/km (AC resistance)
+d = 30.40   # diameter in mm
+kg = 0.089  #
+G = 0 # In this case we consider Admittance negligible
+# Inductance calculation
+
+GMD = (d_AB+d_BC+d_AC) ** (1/3) 
+GMR = kg*(d/2)
+L = 0.2*math.log((GMD*1000)/GMR) #mH/km  / Should give around 1 mH/km
+
+f= 50 # Hz
+Xl = 2*pi*f*L*1000 # Ohm/km
+# Capacitance
+
+Req = d/2
+C = 1000/(18*math.log(GMD*1000/Req)) # nF/km / around 0-20nF/km in overhead lines
+
+#####################################################################################
 
 #LINES LENGHT
 Long1=100
@@ -220,9 +236,23 @@ max_i=888.98/1000
 
 
 
-pp.create_line_from_parameters(net, from_bus = 1, to_bus = 3, length_km = Long1, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = max_i, name='01')
-pp.create_line_from_parameters(net, from_bus = 3, to_bus = 9, length_km = Long2, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = max_i, name='02')
-pp.create_line_from_parameters(net, from_bus = 9, to_bus = 12, length_km = Long2, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='03')
-pp.create_line_from_parameters(net, from_bus = 9, to_bus = 5, length_km = Long3, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='04')
-pp.create_line_from_parameters(net, from_bus = 9, to_bus = 7, length_km = Long4, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='03')
-pp.create_line_from_parameters(net, from_bus = 9, to_bus = 5, length_km = Long3, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='04')
+dbLine = DoubleLineParam()
+
+
+pp.create_line_from_parameters(net, from_bus = 1, to_bus = 3, length_km = Long1, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = max_i, name='1_3')
+pp.create_line_from_parameters(net, from_bus = 3, to_bus = 9, length_km = Long2, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = max_i, name='3_9')
+pp.create_line_from_parameters(net, from_bus = 9, to_bus = 12, length_km = Long2, r_ohm_per_km = R, x_ohm_per_km = Xl, c_nf_per_km = C , max_i_ka = max_i, name='9_12')
+pp.create_line_from_parameters(net, from_bus = 9, to_bus = 5, length_km = Long3, r_ohm_per_km = R, x_ohm_per_km = Xl, c_nf_per_km = C , max_i_ka = max_i, name='9_5')
+pp.create_line_from_parameters(net, from_bus = 9, to_bus = 7, length_km = Long4, r_ohm_per_km = dbline.R, x_ohm_per_km = dbline.Xl, c_nf_per_km = dbline.C , max_i_ka = max_i, name='9_7')
+pp.create_line_from_parameters(net, from_bus = 7, to_bus = 10, length_km = Long3, r_ohm_per_km = R, x_ohm_per_km = Xl, c_nf_per_km = C , max_i_ka = max_i, name='7_10')
+
+##pp.create_line_from_parameters(net, from_bus = 1, to_bus = 3, length_km = Long1, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = max_i, name='01')
+##pp.create_line_from_parameters(net, from_bus = 3, to_bus = 9, length_km = Long2, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = max_i, name='02')
+##pp.create_line_from_parameters(net, from_bus = 9, to_bus = 12, length_km = Long2, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='03')
+##pp.create_line_from_parameters(net, from_bus = 9, to_bus = 5, length_km = Long3, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='04')
+##pp.create_line_from_parameters(net, from_bus = 9, to_bus = 7, length_km = Long4, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='03')
+##pp.create_line_from_parameters(net, from_bus = 9, to_bus = 5, length_km = Long3, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='04')
+
+
+pp.runpp(net)
+
