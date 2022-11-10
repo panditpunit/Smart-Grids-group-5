@@ -16,7 +16,7 @@ PF=0.98
 
 
 #Basic net
-net = pp.create_empty_network(f_hz='50.0', sn_mva=1, add_stdtypes=True)
+net = pp.create_empty_network(f_hz=50.0, sn_mva=1, add_stdtypes=True)
 
 
 pp.create_bus(net, name='Nuclear PP MV', vn_kv = 25, geodata=(100,0))         #0
@@ -166,7 +166,7 @@ class DoubleLineParam:
         self.L = 0.2*log((GMD*1000)/GMR) #mH/km  / Should give around 1 mH/km
 
         f= 50 # Hz
-        self.Xl = 2*pi*f*self.L*1000 # Ohm/km
+        self.Xl = 2*pi*f*self.L/1000 # Ohm/km
 
         # Capacitance
 
@@ -209,7 +209,7 @@ class SimpleLineParam:
         GMR = kg*(d/2)
         self.L = 0.2*log((GMD*1000)/GMR) #mH/km  / Should give around 1 mH/km
         f= 50 # Hz
-        self.Xl = 2*pi*f*self.L*1000 # Ohm/km
+        self.Xl = 2*pi*f*self.L/1000 # Ohm/km
 
 
         # Capacitance
@@ -250,7 +250,7 @@ pp.create_line_from_parameters(net, from_bus = 9, to_bus = 5, length_km = Long3,
 pp.create_line_from_parameters(net, from_bus = 9, to_bus = 7, length_km = Long4, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = max_i, name='9_7')
 pp.create_line_from_parameters(net, from_bus = 7, to_bus = 10, length_km = Long3, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='7_10')
 
-#pp.runpp(net)
+#pp.runpp(net,max_iteration=20)
 print(net.load)
 print(net.bus)
 print(net.trafo)
