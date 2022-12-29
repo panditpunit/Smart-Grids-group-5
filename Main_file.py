@@ -1,7 +1,7 @@
 import numpy as np
 import pandapower as pp
 import pandas as pd
-
+from pandapower.plotting import simple_plotly, pf_res_plotly
 
 ### put all the varaibles here ###
 
@@ -10,33 +10,35 @@ P_nuc = 450 #active power of nuclear poweirr
 P_I = 300
 P_II = 120
 
-Q_dis = 0
+Q_dis = 250
 PF=0.98
 
 
 
 #Basic net
-net = pp.create_empty_network(f_hz=50.0, sn_mva=1, add_stdtypes=True)
 
 
-pp.create_bus(net, name='Nuclear PP MV', vn_kv = 25, geodata=(100,0))         #0
+net = pp.create_empty_network(f_hz=50, sn_mva=1, add_stdtypes=True)
+
+
+pp.create_bus(net, name='Nuclear PP MV', vn_kv = 25, geodata=(100,-10))         #0
 pp.create_bus(net, name='Nuclear PP HV', vn_kv = V_HV, geodata=(100,0))       #1
 
-pp.create_bus(net, name='Type II B1 MV', vn_kv = 36, geodata=(100,100))       #2
+pp.create_bus(net, name='Type II B1 MV', vn_kv = 36, geodata=(90,100))       #2
 pp.create_bus(net, name='Type II B1 HV', vn_kv = V_HV, geodata=(100,100))     #3
 
-pp.create_bus(net, name='Type II B2 MV', vn_kv = 36, geodata=(0,200))         #4
+pp.create_bus(net, name='Type II B2 MV', vn_kv = 36, geodata=(0,210))         #4
 pp.create_bus(net, name='Type II B2 HV', vn_kv = V_HV, geodata=(0,200))       #5
 
-pp.create_bus(net, name='Type II B3 MV', vn_kv = 36, geodata=(150,200))       #6
+pp.create_bus(net, name='Type II B3 MV', vn_kv = 36, geodata=(150,210))       #6
 pp.create_bus(net, name='Type II B3 HV', vn_kv = V_HV, geodata=(150,200))     #7
 
-pp.create_bus(net, name='Type I B1 MV', vn_kv = 36, geodata=(100,150))       #8
+pp.create_bus(net, name='Type I B1 MV', vn_kv = 36, geodata=(100,160))       #8
 pp.create_bus(net, name='Type I B1 HV', vn_kv = V_HV, geodata=(100,150))      #9
 
 pp.create_bus(net, name='Interconnection', vn_kv = V_HV, geodata=(250,150))  #10
 
-pp.create_bus(net, name='Dismantled plant MV', vn_kv = 25, geodata=(150,150)) #11
+pp.create_bus(net, name='Dismantled plant MV', vn_kv = 25, geodata=(160,150)) #11
 pp.create_bus(net, name='Dismantled plant HV', vn_kv = V_HV, geodata=(150,150)) #12
 
 
@@ -87,11 +89,11 @@ pp.create_load(net, 8, name = 'Type I B8', p_mw=P_I, q_mvar=get_reactive(P_I, PF
 ### Trafo definition ###
 
 
-pp.create_transformer_from_parameters(net, hv_bus = 1, lv_bus = 0, sn_mva = 200, vn_hv_kv = 220, vn_lv_kv = 25, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_NuclearPP')
-pp.create_transformer_from_parameters(net, hv_bus = 3, lv_bus = 2, sn_mva = 200, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_II_1')
-pp.create_transformer_from_parameters(net, hv_bus = 5, lv_bus = 4, sn_mva = 200, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_II_2')
-pp.create_transformer_from_parameters(net, hv_bus = 7, lv_bus = 6, sn_mva = 200, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_II_3')
-pp.create_transformer_from_parameters(net, hv_bus = 9, lv_bus = 8, sn_mva = 200, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_I_1')
+pp.create_transformer_from_parameters(net, hv_bus = 1, lv_bus = 0, sn_mva = 500, vn_hv_kv = 220, vn_lv_kv = 25, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_NuclearPP')
+pp.create_transformer_from_parameters(net, hv_bus = 3, lv_bus = 2, sn_mva = 150, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_II_1')
+pp.create_transformer_from_parameters(net, hv_bus = 5, lv_bus = 4, sn_mva = 150, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_II_2')
+pp.create_transformer_from_parameters(net, hv_bus = 7, lv_bus = 6, sn_mva = 150, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_II_3')
+pp.create_transformer_from_parameters(net, hv_bus = 9, lv_bus = 8, sn_mva = 350, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_I_1')
 pp.create_transformer_from_parameters(net, hv_bus = 12, lv_bus = 11, sn_mva = 200, vn_hv_kv = 220, vn_lv_kv = 25, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_DismantledPlant')
 
 
@@ -243,17 +245,23 @@ max_i=888.98/1000
 dbLine = DoubleLineParam()
 sLine = SimpleLineParam()
 
-pp.create_line_from_parameters(net, from_bus = 1, to_bus = 3, length_km = Long1, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = max_i, name='1_3')
-pp.create_line_from_parameters(net, from_bus = 3, to_bus = 9, length_km = Long2, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = max_i, name='3_9')
+pp.create_line_from_parameters(net, from_bus = 1, to_bus = 3, length_km = Long1, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = 2*max_i, name='1_3')
+pp.create_line_from_parameters(net, from_bus = 3, to_bus = 9, length_km = Long2, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = 2*max_i, name='3_9')
 pp.create_line_from_parameters(net, from_bus = 9, to_bus = 12, length_km = Long2, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='9_12')
 pp.create_line_from_parameters(net, from_bus = 9, to_bus = 5, length_km = Long3, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='9_5')
-pp.create_line_from_parameters(net, from_bus = 9, to_bus = 7, length_km = Long4, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = max_i, name='9_7')
+pp.create_line_from_parameters(net, from_bus = 9, to_bus = 7, length_km = Long4, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = 2*max_i, name='9_7')
 pp.create_line_from_parameters(net, from_bus = 7, to_bus = 10, length_km = Long3, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='7_10')
 
-#pp.runpp(net,max_iteration=20)
-print(net.load)
+
+pp.runpp(net, max_iteration=10)
+
+lines=net.res_line
+buses=net.res_bus
+trafos=net.res_trafo
+
+
 print(net.bus)
 print(net.trafo)
 print(net.line)
 pp.to_json(net,'net.json')
-
+pf_res_plotly(net)
