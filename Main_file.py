@@ -253,6 +253,7 @@ pp.create_line_from_parameters(net, from_bus = 9, to_bus = 7, length_km = Long4,
 pp.create_line_from_parameters(net, from_bus = 7, to_bus = 10, length_km = Long3, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='7_10')
 
 
+
 pp.runpp(net, max_iteration=10)
 
 lines=net.res_line
@@ -260,6 +261,8 @@ buses=net.res_bus
 trafos=net.res_trafo
 
 
+pp.diagnostic(net)
+print(net.load)
 print(net.bus)
 print(net.trafo)
 print(net.line)
