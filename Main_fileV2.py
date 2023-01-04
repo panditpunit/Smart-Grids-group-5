@@ -2,6 +2,7 @@ import numpy as np
 import pandapower as pp
 import pandas as pd
 from pandapower.plotting import simple_plotly, pf_res_plotly
+from LineCalculations import LineParam
 
 ### put all the varaibles here ###
 
@@ -103,135 +104,6 @@ pp.create_transformer_from_parameters(net, hv_bus = 13, lv_bus = 14, sn_mva = 20
 pp.create_transformer_from_parameters(net, hv_bus = 15, lv_bus = 16, sn_mva = 75, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_Wind')
 
 
-from math import sqrt, pi , log
-
-#--------------------------------------------------------------------#
-# Double line Line
-#--------------------------------------------------------------------#
-
-class DoubleLineParam:
-    def __init__(self) -> None:
-        pass
-        # Distances
-        a = 9   #m
-        b = 7   #m
-        c = a   #m
-        d = 6.5 #m
-        e = d   #m
-
-        d_A1A2 = sqrt((d+e)**2 + a**2) #m
-        d_A1B1 = sqrt((abs(b-a)/2)**2 + d**2)    #m
-        d_A1B2 = sqrt(((a+b)/2)**2 + d**2)    #m
-        d_A2B1 = sqrt(((b+c)/2)**2 + e**2)   #m
-        d_A2B2 = sqrt((abs(b-c)/2)**2 + e**2)    #m
-        d_A1C1 = sqrt((abs(c-a)/2)**2 + (d+e)**2)    #m  / Suposition that a = c
-        d_A1C2 = a    #m
-        d_A2C1 = c    #m
-        d_A2C2 = d_A1C1    #m
-        d_B1B2 = b    #m
-        d_B1C1 = d_A2B2  #m
-        d_B1C2 = d_A1B2    #m
-        d_B2C1 = d_A2B1  #m
-        d_B2C2 = d_A1B1  #m
-        d_C1C2 = d_A1A2  #m
-        # Conductor Characteristics
-
-        # 54Al + 7Ac
-        # Type Cardenal
-        self.R = 0.062   # Ohms/km (AC resistance)
-        d = 30.40   # diameter in mm
-        r = d/2
-        kg = 0.809  #
-        self.G = 0 # In this case we consider Admittance negligible# Conductor Characteristics
-
-        # GMR Calculation
-
-
-        GMR_A = (kg*r*d_A1A2) ** (1/2)
-        GMR_B = (kg*r*d_B1B2) ** (1/2)
-        GMR_C = (kg*r*d_C1C2) ** (1/2)
-        GMR = (GMR_A*GMR_B*GMR_C) **(1/3)
-
-        # GMD Calculation
-
-        GMD_AB = (d_A1B1*d_A1B2*d_A2B1*d_A2B2) ** (1/4)
-        GMD_BC = (d_B1C1*d_B1C2*d_B2C1*d_B2C2) ** (1/4)
-        GMD_CA = (d_A1C1*d_A1C2*d_A2C1*d_A2C2) ** (1/4)
-
-        GMD = (GMD_AB*GMD_BC*GMD_CA) **(1/3)
-
-        # Req Calculation
-
-        Req_A = (r*d_A1A2) ** (1/2)
-        Req_B = (r*d_B1B2) ** (1/2)
-        Req_C = (r*d_C1C2) ** (1/2)
-
-        Req = (Req_A*Req_B*Req_C) ** (1/3)
-
-        # Inductance Calculation
-
-        self.L = 0.2*log((GMD*1000)/GMR) #mH/km  / Should give around 1 mH/km
-
-        f= 50 # Hz
-        self.Xl = 2*pi*f*self.L/1000 # Ohm/km
-
-        # Capacitance
-
-        self.C = 1000/(18*log(GMD*1000/Req)) # nF/km / around 0-20nF/km in overhead lines
-
-        # Print results
-
-        print('\u0332Double Line Parameters:\u0332\n',)
-        print('R = ',self.R, ' Ohms/km')
-        print('L = ',self.L,' mH/km')
-        print('Xl = ',self.Xl,' Ohms/km')
-        print('C = ',self.C, ' nF/km')
-        print('G = ',self.G, ' 1/Ohms·km')
-
-
-class SimpleLineParam:
-    def __init__(self) -> None:
-        # Distances
-
-        a = 9 #m
-        b = 3 #m
-
-        d_AB = sqrt((a/2)**2 + b**2) #m
-        d_AC = a    #m
-        d_BC = d_AB #m
-
-        # Conductor Characteristics
-
-        # 54Al + 7Ac
-        # Type Cardenal
-
-        self.R = 0.062   # Ohms/km (AC resistance)
-        d = 30.40   # diameter in mm
-        kg = 0.809  #
-        self.G = 0 # In this case we consider Admittance negligible
-
-        # Inductance calculation
-
-        GMD = (d_AB+d_BC+d_AC) ** (1/3) 
-        GMR = kg*(d/2)
-        self.L = 0.2*log((GMD*1000)/GMR) #mH/km  / Should give around 1 mH/km
-        f= 50 # Hz
-        self.Xl = 2*pi*f*self.L/1000 # Ohm/km
-
-
-        # Capacitance
-
-        Req = d/2
-        self.C = 1000/(18*log(GMD*1000/Req)) # nF/kn / around 0-20nF/km in overhead lines
-
-
-
-
-
-
-
-
-
 
 
 #####################################################################################
@@ -246,9 +118,37 @@ Long4=(Long2**2 + Long2**2)**(1/2)
 max_i=888.98/1000
 
 
+a = 9   #m
+b = 7   #m
+c = a   #m
+d = 6.5 #m
+e = d   #m
 
-dbLine = DoubleLineParam()
-sLine = SimpleLineParam()
+dbLine = LineParam(
+        A_coord= [[-a/2,d],[c/2,-e]],
+        B_coord=[[-b/2,0],[b/2,0]],
+        C_coord=[[-c/2,-e],[a/2,d]],
+        Rac= 0.062,
+        kg=0.809,
+        radius=0.03040/2,
+        bundled= False,
+        )
+
+
+a = 9 #m
+b = 3 #m
+
+sLine = LineParam(
+
+        A_coord= [[-a/2,0]],
+        B_coord=[[0,b]],
+        C_coord=[[a/2,0]],
+
+        Rac= 0.062,
+        kg=0.809,
+        radius=0.03040/2,
+        bundled= False,
+        )
 
 pp.create_line_from_parameters(net, from_bus = 1, to_bus = 3, length_km = Long1, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = 2*max_i, name='1_3')
 pp.create_line_from_parameters(net, from_bus = 3, to_bus = 9, length_km = Long2, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = 2*max_i, name='3_9')
