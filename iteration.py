@@ -14,8 +14,8 @@ PV_profile = data['PV'].to_list()
 Wind_profile = data['Wind'].to_list()
 
 #Pending to substitute the actual power installed considering space, and the wind timeseries.
-Wind_power = 100
-PV_power = 100
+Wind_power = 10
+PV_power = 153
 
 l=[]
 
@@ -44,7 +44,7 @@ def grid_iteration():
         up_net.gen['p_mw'].loc[net.gen['name'] == 'Wind PP'] = Wind_power * Wind_profile[i]
         
         pp.runpp(up_net, max_iteration=10)
-        #pf_res_plotly(up_net)
+        pf_res_plotly(up_net)
         
         #Adding the voltages of the buses, an dthe lines and trafo loadings to the result dataframe
         for j in range(len(net.bus)):

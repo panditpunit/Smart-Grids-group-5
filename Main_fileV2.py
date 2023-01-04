@@ -100,7 +100,7 @@ pp.create_transformer_from_parameters(net, hv_bus = 5, lv_bus = 4, sn_mva = 180,
 pp.create_transformer_from_parameters(net, hv_bus = 7, lv_bus = 6, sn_mva = 180, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_II_3')
 pp.create_transformer_from_parameters(net, hv_bus = 9, lv_bus = 8, sn_mva = 450, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_I_1')
 pp.create_transformer_from_parameters(net, hv_bus = 12, lv_bus = 11, sn_mva = 200, vn_hv_kv = 220, vn_lv_kv = 25, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_DismantledPlant')
-pp.create_transformer_from_parameters(net, hv_bus = 13, lv_bus = 14, sn_mva = 200, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_FV')
+pp.create_transformer_from_parameters(net, hv_bus = 13, lv_bus = 14, sn_mva = 220, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_FV')
 pp.create_transformer_from_parameters(net, hv_bus = 15, lv_bus = 16, sn_mva = 75, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_Wind')
 
 
