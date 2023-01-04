@@ -2,6 +2,8 @@ import numpy as np
 import pandapower as pp
 import pandas as pd
 from pandapower.plotting import simple_plotly, pf_res_plotly
+from math import sqrt, pi , log
+from LineCalculations import LineParam
 
 ### put all the varaibles here ###
 
@@ -10,7 +12,7 @@ P_nuc = 450 #active power of nuclear poweirr
 P_I = 300
 P_II = 120
 
-Q_dis = 250
+Q_dis = 200
 PF=0.98
 
 
@@ -98,7 +100,6 @@ pp.create_transformer_from_parameters(net, hv_bus = 12, lv_bus = 11, sn_mva = 20
 
 
 
-from math import sqrt, pi , log
 
 #--------------------------------------------------------------------#
 # Double line Line
@@ -223,12 +224,6 @@ class SimpleLineParam:
 
 
 
-
-
-
-
-
-
 #####################################################################################
 
 #LINES LENGHT
@@ -242,8 +237,42 @@ max_i=888.98/1000
 
 
 
-dbLine = DoubleLineParam()
-sLine = SimpleLineParam()
+#dbLine = DoubleLineParam()
+#sLine = SimpleLineParam()
+
+
+a = 9   #m
+b = 7   #m
+c = a   #m
+d = 6.5 #m
+e = d   #m
+
+dbLine = LineParam(
+        A_coord= [[-a/2,d],[c/2,-e]],
+        B_coord=[[-b/2,0],[b/2,0]],
+        C_coord=[[-c/2,-e],[a/2,d]],
+        Rac= 0.062,
+        kg=0.809,
+        radius=0.03040/2,
+        bundled= False,
+        )
+
+
+a = 9 #m
+b = 3 #m
+
+sLine = LineParam(
+
+        A_coord= [[-a/2,0]],
+        B_coord=[[0,b]],
+        C_coord=[[a/2,0]],
+
+        Rac= 0.062,
+        kg=0.809,
+        radius=0.03040/2,
+        bundled= False,
+        )
+    
 
 pp.create_line_from_parameters(net, from_bus = 1, to_bus = 3, length_km = Long1, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = 2*max_i, name='1_3')
 pp.create_line_from_parameters(net, from_bus = 3, to_bus = 9, length_km = Long2, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = 2*max_i, name='3_9')
@@ -251,6 +280,8 @@ pp.create_line_from_parameters(net, from_bus = 9, to_bus = 12, length_km = Long2
 pp.create_line_from_parameters(net, from_bus = 9, to_bus = 5, length_km = Long3, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='9_5')
 pp.create_line_from_parameters(net, from_bus = 9, to_bus = 7, length_km = Long4, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = 2*max_i, name='9_7')
 pp.create_line_from_parameters(net, from_bus = 7, to_bus = 10, length_km = Long3, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='7_10')
+
+
 
 
 
