@@ -14,8 +14,8 @@ PV_profile = data['PV'].to_list()
 Wind_profile = data['Wind'].to_list()
 
 #Pending to substitute the actual power installed considering space, and the wind timeseries.
-Wind_power = 10
-PV_power = 153
+Wind_power = 100
+PV_power = 100
 
 l=[]
 
@@ -58,10 +58,19 @@ def grid_iteration():
             results['T'+str(j)][i] = up_net.res_trafo['loading_percent'][j]
     results.to_excel('iteration_results.xlsx')
     return results
-#profiles = 
 
 
-#net.load['p_mw'] = net.load['p_mw']*1 ###### update with forecast
 
-#net.gen['p_mw'].loc[net.gen['name'] == 'Solar PP']= 1####### update with forecast
-#net.gen['p_mw'].loc[net.gen['name'] == 'Wind PP']= 1######### update with forecast
+
+def interrumpibility():
+    cost = 0
+    up_net=pp.pandapowerNet(copy.deepcopy(net))
+    for i in range(len(demand_profile)):
+        up_net.load['p_mw'] = net.load['p_mw'] * demand_profile[i] 
+        
+        for j in range(len(net.line)):
+            pass 
+            
+    cost = up_net.load['p_mw'].sum()-up_net.res_load['p_mw'].sum()
+    return cost
+

@@ -49,11 +49,11 @@ pp.create_bus(net, name='Dismantled plant HV', vn_kv = V_HV, geodata=(150,150)) 
 
 #Incoming exercises
 
-pp.create_bus(net, vn_kv = V_HV, name='PV HV ', geodata=(50, 250)) #13
-pp.create_bus(net, vn_kv = 36, name='PV MV', geodata=(60, 250)) #14
+#pp.create_bus(net, vn_kv = V_HV, name='PV HV ', geodata=(50, 250)) #13
+#pp.create_bus(net, vn_kv = 36, name='PV MV', geodata=(60, 250)) #14
 
-pp.create_bus(net, vn_kv = V_HV, name='Wind HV', geodata=(0, 50)) #15
-pp.create_bus(net, vn_kv = 36, name='Wind MV', geodata=(-10, 50)) #16
+#pp.create_bus(net, vn_kv = V_HV, name='Wind HV', geodata=(0, 50)) #15
+#pp.create_bus(net, vn_kv = 36, name='Wind MV', geodata=(-10, 50)) #16
 
 #pp.create_bus(net, vn_kv = V_HV, name='Storage Plant', geodata=(250, 50)) #17
 #pp.create_bus(net, vn_kv = 36, name='Storage Plant', geodata=(250, 50)) #18
@@ -69,8 +69,8 @@ pp.create_ext_grid(net, 10)  #Slack bus will be bus 10
 
 #Incoming exercises
 
-pp.create_gen(net, 16, name='Wind PP', p_mw=P_W)
-pp.create_gen(net, 14, name='PV PP',  p_mw=P_FV)
+#pp.create_gen(net, 16, name='Wind PP', p_mw=P_W)
+#pp.create_gen(net, 14, name='PV PP',  p_mw=P_FV)
 #pp.create_gen(net, ????, name='Storage Plant', name='Storage Plant')
 net.gen
 
@@ -100,8 +100,8 @@ pp.create_transformer_from_parameters(net, hv_bus = 5, lv_bus = 4, sn_mva = 180,
 pp.create_transformer_from_parameters(net, hv_bus = 7, lv_bus = 6, sn_mva = 180, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_II_3')
 pp.create_transformer_from_parameters(net, hv_bus = 9, lv_bus = 8, sn_mva = 450, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_I_1')
 pp.create_transformer_from_parameters(net, hv_bus = 12, lv_bus = 11, sn_mva = 200, vn_hv_kv = 220, vn_lv_kv = 25, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_DismantledPlant')
-pp.create_transformer_from_parameters(net, hv_bus = 13, lv_bus = 14, sn_mva = 220, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_FV')
-pp.create_transformer_from_parameters(net, hv_bus = 15, lv_bus = 16, sn_mva = 150, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_Wind')
+#pp.create_transformer_from_parameters(net, hv_bus = 13, lv_bus = 14, sn_mva = 220, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_FV')
+#pp.create_transformer_from_parameters(net, hv_bus = 15, lv_bus = 16, sn_mva = 150, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_Wind')
 
 
 
@@ -157,8 +157,8 @@ pp.create_line_from_parameters(net, from_bus = 9, to_bus = 5, length_km = Long3,
 pp.create_line_from_parameters(net, from_bus = 9, to_bus = 7, length_km = Long4, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = 2*max_i, name='9_7')
 pp.create_line_from_parameters(net, from_bus = 7, to_bus = 10, length_km = Long3, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='7_10')
 #PV & wind
-pp.create_line_from_parameters(net, from_bus = 5, to_bus = 13, length_km = Long4, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='5_13')
-pp.create_line_from_parameters(net, from_bus = 3, to_bus = 15, length_km = Long3, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='3_15')
+#pp.create_line_from_parameters(net, from_bus = 5, to_bus = 13, length_km = Long4, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='5_13')
+#pp.create_line_from_parameters(net, from_bus = 3, to_bus = 15, length_km = Long3, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='3_15')
 
 
 

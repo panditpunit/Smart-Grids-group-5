@@ -18,8 +18,8 @@ PV_profile = data['PV'].to_list()
 Wind_profile = data['Wind'].to_list()
 
 #Pending to substitute the actual power installed considering space, and the wind timeseries.
-Wind_power = 10
-PV_power = 153
+Wind_power = 100
+PV_power = 100
 
 l=[]
 
