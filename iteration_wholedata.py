@@ -8,11 +8,13 @@ import random
 #Base net is generated in a different file, and stored in a json file.
 net = pp.from_json('net.json')
 
-data = pd.read_excel('day_data.xlsx')
+data = pd.read_excel('data.xlsx')
 
 demand_profile = data['Demand'].to_list()
 PV_profile = data['PV'].to_list()
 Wind_profile = data['Wind'].to_list()
+
+net.sgen['q_mvar'][0] = 0
 
 #Pending to substitute the actual power installed considering space, and the wind timeseries.
 Wind_power = 100
@@ -45,7 +47,7 @@ def grid_iteration():
         up_net.gen['p_mw'].loc[net.gen['name'] == 'Wind PP'] = Wind_power * Wind_profile[i]
         
         pp.runpp(up_net, max_iteration=10)
-        pf_res_plotly(up_net)
+        #pf_res_plotly(up_net)
         
         #Adding the voltages of the buses, an dthe lines and trafo loadings to the result dataframe
         for j in range(len(net.bus)):
@@ -57,7 +59,7 @@ def grid_iteration():
        
         for j in range(len(net.trafo)):
             results['T'+str(j)][i] = up_net.res_trafo['loading_percent'][j]
-    results.to_excel('iteration_results.xlsx')
+    results.to_excel('final_grid_alldata_220.xlsx')
     return results
 
 
@@ -86,7 +88,7 @@ def interrumpibility():
     res = pd.DataFrame(columns = col)
     
     #Simulated for a year long
-    for day in range(365):
+    for season in range(4):
         #Hourly data, using the same day
         for i in range(len(demand_profile)):
             
@@ -159,6 +161,6 @@ def interrumpibility():
                 res.loc[len(res)] = r
                     
 
-    res.to_excel('interrumpibility_report_improved_01.xlsx')
+    res.to_excel('interrumpibility_report_improved_alldata.xlsx')
     return cost, counter
 
