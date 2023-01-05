@@ -43,8 +43,8 @@ pp.create_bus(net, name='Type I B1 HV', vn_kv = V_HV, geodata=(100,150))      #9
 
 pp.create_bus(net, name='Interconnection', vn_kv = V_HV, geodata=(250,150))  #10
 
-pp.create_bus(net, name='Dismantled plant MV', vn_kv = 25, geodata=(160,150)) #11
-pp.create_bus(net, name='Dismantled plant HV', vn_kv = V_HV, geodata=(150,150)) #12
+#pp.create_bus(net, name='Dismantled plant MV', vn_kv = 25, geodata=(160,150)) #11
+#pp.create_bus(net, name='Dismantled plant HV', vn_kv = V_HV, geodata=(150,150)) #12
 
 
 #Incoming exercises
@@ -64,7 +64,7 @@ pp.create_bus(net, name='Dismantled plant HV', vn_kv = V_HV, geodata=(150,150)) 
 ### Generator Definition ###
 
 pp.create_gen(net, 0, name='Nuclear PP', vm_pu=1.05, p_mw=P_nuc)
-pp.create_sgen(net, 11, name='Dismantled Plant', p_mw=0, q_mvar=Q_dis)
+#pp.create_sgen(net, 11, name='Dismantled Plant', p_mw=0, q_mvar=Q_dis)
 pp.create_ext_grid(net, 10)  #Slack bus will be bus 10
 
 #Incoming exercises
@@ -99,7 +99,7 @@ pp.create_transformer_from_parameters(net, hv_bus = 3, lv_bus = 2, sn_mva = 180,
 pp.create_transformer_from_parameters(net, hv_bus = 5, lv_bus = 4, sn_mva = 180, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_II_2')
 pp.create_transformer_from_parameters(net, hv_bus = 7, lv_bus = 6, sn_mva = 180, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_II_3')
 pp.create_transformer_from_parameters(net, hv_bus = 9, lv_bus = 8, sn_mva = 450, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_I_1')
-pp.create_transformer_from_parameters(net, hv_bus = 12, lv_bus = 11, sn_mva = 200, vn_hv_kv = 220, vn_lv_kv = 25, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_DismantledPlant')
+#pp.create_transformer_from_parameters(net, hv_bus = 12, lv_bus = 11, sn_mva = 200, vn_hv_kv = 220, vn_lv_kv = 25, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_DismantledPlant')
 #pp.create_transformer_from_parameters(net, hv_bus = 13, lv_bus = 14, sn_mva = 220, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_FV')
 #pp.create_transformer_from_parameters(net, hv_bus = 15, lv_bus = 16, sn_mva = 150, vn_hv_kv = 220, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_Wind')
 
@@ -152,7 +152,7 @@ sLine = LineParam(
 
 pp.create_line_from_parameters(net, from_bus = 1, to_bus = 3, length_km = Long1, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = 2*max_i, name='1_3')
 pp.create_line_from_parameters(net, from_bus = 3, to_bus = 9, length_km = Long2, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = 2*max_i, name='3_9')
-pp.create_line_from_parameters(net, from_bus = 9, to_bus = 12, length_km = Long2, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='9_12')
+#pp.create_line_from_parameters(net, from_bus = 9, to_bus = 12, length_km = Long2, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='9_12')
 pp.create_line_from_parameters(net, from_bus = 9, to_bus = 5, length_km = Long3, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='9_5')
 pp.create_line_from_parameters(net, from_bus = 9, to_bus = 7, length_km = Long4, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = 2*max_i, name='9_7')
 pp.create_line_from_parameters(net, from_bus = 7, to_bus = 10, length_km = Long3, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='7_10')

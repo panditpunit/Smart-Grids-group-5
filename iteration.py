@@ -3,6 +3,7 @@ import numpy as np
 import pandapower as pp
 import copy
 from pandapower.plotting import simple_plotly, pf_res_plotly
+import random
 
 #Base net is generated in a different file, and stored in a json file.
 net = pp.from_json('net.json')
@@ -64,13 +65,92 @@ def grid_iteration():
 
 def interrumpibility():
     cost = 0
-    up_net=pp.pandapowerNet(copy.deepcopy(net))
-    for i in range(len(demand_profile)):
-        up_net.load['p_mw'] = net.load['p_mw'] * demand_profile[i] 
+    col = []
+    line_fail = []
+    traf = []
+    trafo_fail = []
+    #Tracking the hours out of service
+    for line in range(len(net.line)):
+        col.append('L'+str(line))
+        line_fail.append(0)
         
-        for j in range(len(net.line)):
-            pass 
+    for trafo in range(len(net.trafo)):
+        traf.append('T'+str(trafo))
+        trafo_fail.append(0)
+        
+    col = col + traf
+    col.append('%Demand not covered')
+    col.append('Total Blackout')
+    col.append('Cumulative cost')
+    res = pd.DataFrame(columns = col)
+    
+    #Simulated for a year long
+    for day in range(365):
+        #Hourly data, using the same day
+        for i in range(len(demand_profile)):
+            up_net=pp.pandapowerNet(copy.deepcopy(net))
+            up_net.load['p_mw'] = net.load['p_mw'] * demand_profile[i] 
             
-    cost = up_net.load['p_mw'].sum()-up_net.res_load['p_mw'].sum()
+            for j in range(len(net.line)):
+                #Rate of failure depends on length
+                rate = up_net.line['length_km'][j]*0.05/8760
+                a = random.random()
+                failure = rate > a
+                if line_fail[j] >= 2:
+                    line_fail[j] = 0
+                #A line is out of service if the random number lies inside the probability of failure, or if the time of failure is 1 (at 2 it is repaired)
+                if failure == True or line_fail[j] in range(1,3):
+                    line_fail[j] += 1
+                    up_net.line['in_service'][j]=False
+                    
+                
+                
+            for t in range(len(net.trafo)):
+                
+                rate = 0.15/8760
+                a = random.random()
+                failure = rate > a
+                
+                if trafo_fail[t] >= 8:
+                    trafo_fail[t] = 0
+                #Same as for lines, but the time of repair is 8 hours instead
+                if failure == True or trafo_fail[t] in range(1,9):
+                    trafo_fail[t] += 1
+                    up_net.trafo['in_service'][t]=False
+                
+                    
+            #We attempt to solve the grid. Sometimes it is solvable, but not all the grid is in service
+            try:
+                pp.runpp(up_net, max_iteration=10)
+                non_covered = up_net.load['p_mw'].sum()-up_net.res_load['p_mw'].sum()
+                cost += 150*non_covered
+                perc = 1 - up_net.res_load['p_mw'].sum()/up_net.load['p_mw'].sum()
+                if non_covered !=0:
+                    
+                    r = line_fail + trafo_fail
+                    r.append(perc*100)
+                    if perc >= 0.99:
+                        r.append(True)
+                    else:
+                        r.append(False)
+                    r.append(cost)
+                    res.loc[len(res)] = r
+                    pf_res_plotly(up_net)
+                    
+            #Some other times, the grid doesn't converge
+            except:
+                
+                non_covered = up_net.load['p_mw'].sum()
+                cost += 150*non_covered
+                
+                
+                r=line_fail+trafo_fail
+                r.append(100)
+                r.append(True)
+                r.append(cost)
+                res.loc[len(res)] = r
+                    
+
+    res.to_excel('interrumpibility_report.xlsx')
     return cost
 
