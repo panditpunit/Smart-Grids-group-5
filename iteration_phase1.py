@@ -64,7 +64,7 @@ def grid_iteration():
        
         for j in range(len(net.trafo)):
             results['T'+str(j)][i] = up_net.res_trafo['loading_percent'][j]
-    results.to_excel('iteration_results_ring.xlsx')
+    results.to_excel('iteration_2_single.xlsx')
     return results
 #profiles = 
 

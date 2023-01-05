@@ -6,11 +6,12 @@ from LineCalculations import LineParam
 
 ### put all the varaibles here ###
 
-V_HV = 220 #kilo-V base voltage
+V_HV = 400 #kilo-V base voltage
+
 P_nuc = 450 #active power of nuclear poweirr 
 
-P_W= 10
-P_FV=153
+P_W= 100
+P_FV=100
 
 P_I = 300
 P_II = 120
@@ -101,7 +102,7 @@ pp.create_transformer_from_parameters(net, hv_bus = 7, lv_bus = 6, sn_mva = 180,
 pp.create_transformer_from_parameters(net, hv_bus = 9, lv_bus = 8, sn_mva = 450, vn_hv_kv =V_HV, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_I_1')
 pp.create_transformer_from_parameters(net, hv_bus = 12, lv_bus = 11, sn_mva = 200, vn_hv_kv = V_HV, vn_lv_kv = 25, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_DismantledPlant')
 pp.create_transformer_from_parameters(net, hv_bus = 13, lv_bus = 14, sn_mva = 220, vn_hv_kv = V_HV, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_FV')
-pp.create_transformer_from_parameters(net, hv_bus = 15, lv_bus = 16, sn_mva = 75, vn_hv_kv = V_HV, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_Wind')
+pp.create_transformer_from_parameters(net, hv_bus = 15, lv_bus = 16, sn_mva = 150, vn_hv_kv = V_HV, vn_lv_kv = 36, vk_percent = 10, vkr_percent = 0, pfe_kw = 0, i0_percent = 0, name = 'Trafo_Wind')
 
 
 
@@ -162,9 +163,9 @@ pp.create_line_from_parameters(net, from_bus = 7, to_bus = 10, length_km = Long3
 pp.create_line_from_parameters(net, from_bus = 5, to_bus = 13, length_km = Long4, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='5_13')
 pp.create_line_from_parameters(net, from_bus = 3, to_bus = 15, length_km = Long3, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='3_15')
 #N-1
-pp.create_line_from_parameters(net, from_bus = 3, to_bus = 10, length_km = Long6, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = 2*max_i, name='3_10')
-pp.create_line_from_parameters(net, from_bus = 1, to_bus = 15, length_km = Long3, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = 2*max_i, name='1_3')
-pp.create_line_from_parameters(net, from_bus = 5, to_bus = 15, length_km = Long5, r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = 2*max_i, name='5_15')
+pp.create_line_from_parameters(net, from_bus = 10, to_bus = 3, length_km = Long6,r_ohm_per_km = dbLine.R, x_ohm_per_km = dbLine.Xl, c_nf_per_km = dbLine.C , max_i_ka = 2*max_i, name='3_10')
+pp.create_line_from_parameters(net, from_bus = 1, to_bus = 3, length_km = Long3, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='1_3')
+pp.create_line_from_parameters(net, from_bus = 5, to_bus = 15, length_km = Long5, r_ohm_per_km = sLine.R, x_ohm_per_km = sLine.Xl, c_nf_per_km = sLine.C , max_i_ka = max_i, name='5_15')
 
 
 pp.runpp(net, max_iteration=10)
