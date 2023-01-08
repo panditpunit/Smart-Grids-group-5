@@ -92,7 +92,9 @@ def interrumpibility():
             
             incidences = False
             up_net=pp.pandapowerNet(copy.deepcopy(net))
-            up_net.load['p_mw'] = net.load['p_mw'] * demand_profile[i] 
+            up_net.load['p_mw'] = net.load['p_mw'] * demand_profile[i]
+            up_net.gen['p_mw'].loc[net.gen['name'] == 'Solar PP'] = PV_power * PV_profile[i]
+            up_net.gen['p_mw'].loc[net.gen['name'] == 'Wind PP'] = Wind_power * Wind_profile[i]
             
             for j in range(len(net.line)):
                 #Rate of failure depends on length
@@ -161,4 +163,62 @@ def interrumpibility():
 
     res.to_excel('interrumpibility_report_improved_01.xlsx')
     return cost, counter
+
+
+
+def cost():
+    pr_v = 35 #€/MWh
+    pr_f = 60 #€/MWh
+    pr_p = 90 #€/MWh
+    
+    pr_exp = 0.6
+    day = 0
+    cost = 0
+    
+    for d in range(365):
+        
+        counter = 0
+        for hour in range(len(demand_profile)):
+            
+            up_net=pp.pandapowerNet(copy.deepcopy(net))
+            up_net.load['p_mw'] = net.load['p_mw'] * demand_profile[i] 
+            up_net.gen['p_mw'].loc[net.gen['name'] == 'Solar PP'] = PV_power * PV_profile[i]
+            up_net.gen['p_mw'].loc[net.gen['name'] == 'Wind PP'] = Wind_power * Wind_profile[i]
+            pp.runpp(up_net, max_iteration=10)
+            
+            if counter in range(0,8) or day in range(6,8): #valley
+                if net.res_ext_grid['p_mw'][0] < 0:
+                    cost += pr_exp*pr_v*net.res_ext_grid['p_mw'][0]
+                    print('Injection')
+                else:             
+                    cost += pr_v*net.res_ext_grid['p_mw'][0]
+                counter += 1
+            elif counter in range(8,10) or counter in range(14,18): #flat
+                if net.res_ext_grid['p_mw'][0] < 0:
+                    cost += pr_exp*pr_f*net.res_ext_grid['p_mw'][0]
+                    print('Injection')
+                else:             
+                    cost += pr_f*net.res_ext_grid['p_mw'][0]
+                counter += 1
+            else: #peak
+                if net.res_ext_grid['p_mw'][0] < 0:
+                    cost += pr_exp*pr_p*net.res_ext_grid['p_mw'][0]
+                    print('Injection')
+                else:             
+                    cost += pr_p*net.res_ext_grid['p_mw'][0]
+                counter += 1
+            
+            if counter == 24:
+                counter = 0
+                day += 1
+                
+            if day == 8:
+                day = 0
+    
+    
+    return cost
+
+
+
+
 
