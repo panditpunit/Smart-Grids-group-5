@@ -142,7 +142,7 @@ def interrumpibility():
                         r.append(False)
                     r.append(cost)
                     res.loc[len(res)] = r
-                    pf_res_plotly(up_net)
+                    #pf_res_plotly(up_net)
                 else:
                     if incidences == True:
                         counter+=1
@@ -161,7 +161,7 @@ def interrumpibility():
                 res.loc[len(res)] = r
                     
 
-    res.to_excel('interrumpibility_report_improved_01.xlsx')
+    res.to_excel('report_int_base_day.xlsx')
     return cost, counter
 
 
@@ -175,48 +175,48 @@ def cost():
     day = 0
     cost = 0
     
-    for d in range(365):
+    for d in range(1):
         
         counter = 0
         for hour in range(len(demand_profile)):
             
             up_net=pp.pandapowerNet(copy.deepcopy(net))
-            up_net.load['p_mw'] = net.load['p_mw'] * demand_profile[i] 
-            up_net.gen['p_mw'].loc[net.gen['name'] == 'Solar PP'] = PV_power * PV_profile[i]
-            up_net.gen['p_mw'].loc[net.gen['name'] == 'Wind PP'] = Wind_power * Wind_profile[i]
+            up_net.load['p_mw'] = up_net.load['p_mw'] * demand_profile[hour] 
+            up_net.gen['p_mw'].loc[up_net.gen['name'] == 'Solar PP'] = PV_power * PV_profile[hour]
+            up_net.gen['p_mw'].loc[up_net.gen['name'] == 'Wind PP'] = Wind_power * Wind_profile[hour]
             pp.runpp(up_net, max_iteration=10)
             
             if counter in range(0,8) or day in range(6,8): #valley
-                if net.res_ext_grid['p_mw'][0] < 0:
-                    cost += pr_exp*pr_v*net.res_ext_grid['p_mw'][0]
-                    print('Injection')
+                if up_net.res_ext_grid['p_mw'][0] < 0:
+                    cost += pr_exp*pr_v*up_net.res_ext_grid['p_mw'][0]
+                    #print('Injection')
                 else:             
-                    cost += pr_v*net.res_ext_grid['p_mw'][0]
+                    cost += pr_v*up_net.res_ext_grid['p_mw'][0]
                 counter += 1
             elif counter in range(8,10) or counter in range(14,18): #flat
-                if net.res_ext_grid['p_mw'][0] < 0:
-                    cost += pr_exp*pr_f*net.res_ext_grid['p_mw'][0]
-                    print('Injection')
+                if up_net.res_ext_grid['p_mw'][0] < 0:
+                    cost += pr_exp*pr_f*up_net.res_ext_grid['p_mw'][0]
+                    #print('Injection')
                 else:             
-                    cost += pr_f*net.res_ext_grid['p_mw'][0]
+                    cost += pr_f*up_net.res_ext_grid['p_mw'][0]
                 counter += 1
             else: #peak
-                if net.res_ext_grid['p_mw'][0] < 0:
-                    cost += pr_exp*pr_p*net.res_ext_grid['p_mw'][0]
-                    print('Injection')
+                if up_net.res_ext_grid['p_mw'][0] < 0:
+                    cost += pr_exp*pr_p*up_net.res_ext_grid['p_mw'][0]
+                    #print('Injection')
                 else:             
-                    cost += pr_p*net.res_ext_grid['p_mw'][0]
+                    cost += pr_p*up_net.res_ext_grid['p_mw'][0]
                 counter += 1
             
             if counter == 24:
                 counter = 0
                 day += 1
                 
-            if day == 8:
+            if day == 7:
                 day = 0
-    
-    
-    return cost
+                print(hour)
+
+    return cost*4
 
 
 
