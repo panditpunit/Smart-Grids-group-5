@@ -3,7 +3,7 @@ import pandapower as pp
 import pandas as pd
 from pandapower.plotting import simple_plotly, pf_res_plotly
 from math import sqrt, pi , log
-from LineCalculations import LineParam
+from PandaPowerNet.LineCalculations import LineParam
 
 ### put all the varaibles here ###
 
